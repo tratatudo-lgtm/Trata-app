@@ -8,53 +8,101 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #e0f2fe, #f0f9ff);
+      background: #f2f4f8;
+      color: #111827;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
-      text-align: center;
-      padding: 2rem;
     }
-    h1 {
-      font-size: 2.5rem;
-      color: #1e3a8a;
-      margin-bottom: 1rem;
-    }
-    p {
-      font-size: 1.2rem;
-      color: #334155;
-      margin-bottom: 2rem;
-    }
-    button {
-      background-color: #2563eb;
+    header {
+      background: #2563eb;
       color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    main {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      padding: 0.5rem 0;
+    }
+    nav button {
+      background: none;
       border: none;
-      padding: 1rem 2rem;
-      font-size: 1rem;
-      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #2563eb;
+      font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #1d4ed8;
+    nav button.active {
+      border-bottom: 2px solid #2563eb;
     }
   </style>
 </head>
 <body>
-  <h1>Bem-vindo ao Trata Tudo</h1>
-  <p>Resolvemos a sua burocracia com rapidez, confiança e tecnologia.</p>
-  <button onclick="alert('Em breve: contacto direto com a nossa equipa!')">Contactar</button>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-  <meta charset="UTF-8" />
-  <title>Trata Tudo</title>
-</head>
-<body>
-  <h1>Bem-vindo ao Trata Tudo</h1>
-  <p>Esta é a página inicial.</p>
+  <header>📲 Trata Tudo</header>
+
+  <main id="content">
+    <div class="card">
+      <h2>Bem-vindo</h2>
+      <p>Esta é a tua área pessoal. Usa o menu abaixo para navegar.</p>
+    </div>
+  </main>
+
+  <nav>
+    <button onclick="loadPage('dashboard')" class="active">Dashboard</button>
+    <button onclick="loadPage('upload')">Upload</button>
+    <button onclick="loadPage('historico')">Histórico</button>
+    <button onclick="loadPage('login')">Sair</button>
+  </nav>
+
+  <script>
+    const content = document.getElementById('content');
+    const buttons = document.querySelectorAll('nav button');
+
+    function setActive(btn) {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function loadPage(page) {
+      setActive(event.target);
+      if (page === 'login') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      fetch(`${page}.html`)
+        .then(res => res.text())
+        .then(html => {
+          content.innerHTML = `<div class="card">${html}</div>`;
+        })
+        .catch(() => {
+          content.innerHTML = `<div class="card"><p>Erro ao carregar ${page}.html</p></div>`;
+        });
+    }
+  </script>
 </body>
 </html>
