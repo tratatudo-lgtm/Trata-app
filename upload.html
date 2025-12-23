@@ -31,22 +31,41 @@
       border: 1px solid #ccc;
       border-radius: 5px;
     }
+    .success {
+      color: green;
+      margin-top: 1rem;
+    }
+    .error {
+      color: red;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
   <div class="upload-box">
     <h2>Carregar Documento</h2>
     <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" />
+    <button onclick="uploadFile()">Enviar</button>
     <div class="preview" id="preview"></div>
+    <div class="success" id="success"></div>
+    <div class="error" id="error"></div>
   </div>
 
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
   <script>
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
+    const success = document.getElementById('success');
+    const error = document.getElementById('error');
 
     fileInput.addEventListener('change', () => {
       const file = fileInput.files[0];
       preview.innerHTML = '';
+      success.textContent = '';
+      error.textContent = '';
 
       if (!file) return;
 
@@ -59,13 +78,27 @@
         img.src = URL.createObjectURL(file);
         preview.appendChild(img);
       } else if (file.type === 'application/pdf') {
-        const pdfIcon = document.createElement('p');
-        pdfIcon.textContent = "📄 Documento PDF selecionado.";
-        preview.appendChild(pdfIcon);
-      } else {
-        preview.textContent = "Tipo de ficheiro não suportado.";
+        preview.innerHTML += "📄 Documento PDF selecionado.";
       }
     });
+
+    function uploadFile() {
+      const file = fileInput.files[0];
+      if (!file) {
+        error.textContent = "Por favor, selecione um ficheiro.";
+        return;
+      }
+
+      const storageRef = firebase.storage().ref("documentos/" + file.name);
+      storageRef.put(file)
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+          success.textContent = "✅ Upload concluído! Link: " + url;
+        })
+        .catch(err => {
+          error.textContent = "Erro ao enviar: " + err.message;
+        });
+    }
   </script>
 </body>
 </html>
