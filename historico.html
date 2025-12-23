@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Histórico de Uploads - Trata Tudo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9fafb;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    h2 {
+      margin-bottom: 1rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.5rem;
+    }
+    a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Histórico de Documentos</h2>
+    <ul id="fileList">
+      <li>A carregar...</li>
+    </ul>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script>
+    const fileList = document.getElementById('fileList');
+
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      const storageRef = firebase.storage().ref("documentos/");
+      storageRef.listAll()
+        .then((res) => {
+          fileList.innerHTML = '';
+          if (res.items.length === 0) {
+            fileList.innerHTML = '<li>Nenhum documento encontrado.</li>';
+          }
+          res.items.forEach((itemRef) => {
+            itemRef.getDownloadURL().then((url) => {
+              const li = document.createElement('li');
+              li.innerHTML = `<a href="${url}" target="_blank">${itemRef.name}</a>`;
+              fileList.appendChild(li);
+            });
+          });
+        })
+        .catch((error) => {
+          fileList.innerHTML = '<li>Erro ao carregar documentos.</li>';
+          console.error(error);
+        });
+    });
+  </script>
+</body>
+</html>
