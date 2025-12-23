@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload de Documentos - Trata Tudo</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f9fafb;
+      padding: 2rem;
+    }
+    .upload-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      max-width: 500px;
+      margin: auto;
+      text-align: center;
+    }
+    input[type="file"] {
+      margin: 1rem 0;
+    }
+    .preview {
+      margin-top: 1rem;
+    }
+    .preview img {
+      max-width: 100%;
+      max-height: 300px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="upload-box">
+    <h2>Carregar Documento</h2>
+    <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png" />
+    <div class="preview" id="preview"></div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      preview.innerHTML = '';
+
+      if (!file) return;
+
+      const fileName = document.createElement('p');
+      fileName.textContent = "Ficheiro: " + file.name;
+      preview.appendChild(fileName);
+
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        preview.appendChild(img);
+      } else if (file.type === 'application/pdf') {
+        const pdfIcon = document.createElement('p');
+        pdfIcon.textContent = "📄 Documento PDF selecionado.";
+        preview.appendChild(pdfIcon);
+      } else {
+        preview.textContent = "Tipo de ficheiro não suportado.";
+      }
+    });
+  </script>
+</body>
+</html>
